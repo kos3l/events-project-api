@@ -15,7 +15,6 @@ let eventSchema = new Schema<EventDocument>(
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "user",
-      required: true,
     },
   },
   { timestamps: true }
@@ -44,8 +43,5 @@ eventSchema.pre(
     update.$inc.__v = 1;
   }
 );
-
-module.exports = model<EventDocument, Model<EventDocument>>(
-  "event",
-  eventSchema
-);
+const Event = model<EventDocument, Model<EventDocument>>("event", eventSchema);
+export default Event;

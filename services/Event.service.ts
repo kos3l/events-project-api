@@ -6,79 +6,48 @@ import { IUpdateEventDTO } from "../models/dto/event/IUpdateEventDTO";
 import { DatePrecision } from "../models/types/DatePrecision";
 import { IEventQueryParams } from "../models/util/IEventQueryParams";
 import { DateHelper } from "../utils/helpers/Date.helper";
-const Event: HydratedDocument<
-  EventDocument,
-  Model<EventDocument>
-> = require("../models/schemas/EventSchema.ts");
+import Event from "../models/schemas/EventSchema";
 
-const createNewEvent = async (
-  id: mongoose.Types.ObjectId,
-  newEvent: ICreateEventDTO
-): Promise<HydratedDocument<EventDocument>> => {
-  let eventData = {
-    ...newEvent,
-    createdBy: id,
-  };
-  const createdEvent: HydratedDocument<EventDocument> = await Event.create(
-    eventData
-  );
+const createNewEvent = async (newEvent: ICreateEventDTO) => {
+  const createdEvent = await Event.create(newEvent);
   return createdEvent;
 };
 
-const getAllEvents = async (
-  userId: mongoose.Types.ObjectId,
-  isArchived: boolean
-): Promise<HydratedDocument<EventDocument>[]> => {
-  const findArgs: IEventQueryParams =
-    isArchived != undefined && isArchived != null
-      ? {
-          createdBy: userId,
-          isArchived: isArchived,
-        }
-      : {
-          createdBy: userId,
-        };
+const getAllEvents = async () => {
+  // const findArgs: IEventQueryParams =
+  //   isArchived != undefined && isArchived != null
+  //     ? {
+  //         createdBy: userId,
+  //         isArchived: isArchived,
+  //       }
+  //     : {
+  //         createdBy: userId,
+  //       };
 
-  const allEvents: HydratedDocument<EventDocument>[] = await Event.find(
-    findArgs
-  );
+  const allEvents = await Event.find();
   return allEvents;
 };
 
-const getAllEventsByDate = async (
-  userId: mongoose.Types.ObjectId,
-  date: Date,
-  datePrecision: DatePrecision
-): Promise<HydratedDocument<EventDocument>[]> => {
-  let findArgs: IEventQueryParams = {
-    createdBy: userId,
-    startDate: {
-      $gte: DateHelper.calculateStartOfPeriod(date, datePrecision),
-      $lte: DateHelper.calculateEndOfPeriod(date, datePrecision),
-    },
-  };
+const getAllEventsByDate = async () => {
+  // let findArgs: IEventQueryParams = {
+  //   createdBy: userId,
+  //   startDate: {
+  //     $gte: DateHelper.calculateStartOfPeriod(date, datePrecision),
+  //     $lte: DateHelper.calculateEndOfPeriod(date, datePrecision),
+  //   },
+  // };
 
-  const allEvents: HydratedDocument<EventDocument>[] = await Event.find(
-    findArgs
-  );
+  const allEvents = await Event.find();
   return allEvents;
 };
 
-const getEventById = async (
-  id: mongoose.Types.ObjectId
-): Promise<HydratedDocument<EventDocument> | null> => {
-  const event: HydratedDocument<EventDocument> | null = await Event.findById(
-    id
-  );
+const getEventById = async (id: string) => {
+  const event = await Event.findById(id);
   return event;
 };
 
-const updateOneEvent = async (
-  id: mongoose.Types.ObjectId,
-  updatedEvent: IUpdateEventDTO
-): Promise<HydratedDocument<EventDocument> | null> => {
-  const event: HydratedDocument<EventDocument> | null =
-    await Event.findByIdAndUpdate(id, updatedEvent);
+const updateOneEvent = async (id: string, updatedEvent: IUpdateEventDTO) => {
+  const event = await Event.findByIdAndUpdate(id, updatedEvent);
   return event;
 };
 
@@ -90,15 +59,12 @@ const archiveEvents = async (): Promise<UpdateResult> => {
   return events;
 };
 
-const deleteOneEvent = async (
-  id: mongoose.Types.ObjectId
-): Promise<HydratedDocument<EventDocument> | null> => {
-  const deletedEvent: HydratedDocument<EventDocument> | null =
-    await Event.findByIdAndDelete(id);
+const deleteOneEvent = async (id: string) => {
+  const deletedEvent = await Event.findByIdAndDelete(id);
   return deletedEvent;
 };
 
-module.exports = {
+const eventService = {
   getAllEvents,
   getAllEventsByDate,
   getEventById,
@@ -107,3 +73,5 @@ module.exports = {
   archiveEvents,
   deleteOneEvent,
 };
+
+export = eventService;

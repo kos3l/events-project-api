@@ -4,8 +4,8 @@ import express from "express";
 import mongoose from "mongoose";
 import yaml from "yamljs";
 import bodyParser from "body-parser";
-const eventRoutes = require("./routes/Event.routes");
-const authRoutes = require("./routes/Auth.routes");
+import eventRoutes from "./routes/Event.routes";
+import authRoutes from "./routes/Auth.routes";
 const swaggerDefinition = yaml.load("./swagger.yaml");
 const swaggerUi = require("swagger-ui-express");
 import { Request, Response } from "express";
@@ -24,7 +24,7 @@ app.get("/api/welcome", (req: Request, res: Response) => {
 });
 
 app.use("/api/user", authRoutes);
-app.use("/api/event", verifyToken, eventRoutes);
+app.use("/api/event", eventRoutes);
 
 // Open mongoose connection
 mongoose
@@ -42,4 +42,4 @@ app.listen(PORT, function () {
   console.log("Server is running on port: " + PORT);
 });
 
-export = app;
+export { app };

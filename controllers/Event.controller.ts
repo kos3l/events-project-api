@@ -1,26 +1,21 @@
 import { ICreateEventDTO } from "../models/dto/event/ICreateEventDTO";
 import { Response } from "express";
 import { ExtendedRequest } from "../models/util/IExtendedRequest";
-import { HydratedDocument } from "mongoose";
-import { EventDocument } from "../models/documents/EventDocument";
 import { DatePrecision } from "../models/types/DatePrecision";
 import { DateHelper } from "../utils/helpers/Date.helper";
 import { PrecisionHelper } from "../utils/helpers/Precision.helper";
 import { IUpdateEventDTO } from "../models/dto/event/IUpdateEventDTO";
 import { UpdateResult } from "mongodb";
-const eventService = require("../services/Event.service");
+import eventService from "../services/Event.service";
 
-const createNewEvent = async (
-  req: ExtendedRequest,
-  res: Response
-): Promise<Response> => {
+const createNewEvent = async (req: ExtendedRequest, res: Response) => {
   const data = req.body;
   const eventDto: ICreateEventDTO = data[0];
 
-  if (!req.user) {
-    return res.status(500).send({ message: "Not Authorised!" });
-  }
-  const userId = req.user;
+  // if (!req.user) {
+  //   return res.status(500).send({ message: "Not Authorised!" });
+  // }
+  // const userId = req.user;
 
   if (new Date(eventDto.startDate) < new Date()) {
     return res
@@ -29,8 +24,7 @@ const createNewEvent = async (
   }
 
   try {
-    const newEvent: HydratedDocument<EventDocument> =
-      await eventService.createNewEvent(userId, eventDto);
+    const newEvent = await eventService.createNewEvent(eventDto);
     return res.send(newEvent);
   } catch (error: any) {
     return res.status(500).send({ message: error.message });
@@ -38,10 +32,10 @@ const createNewEvent = async (
 };
 
 const getAllEvents = async (req: ExtendedRequest, res: Response) => {
-  if (!req.user) {
-    return res.status(500).send({ message: "Not Authorised!" });
-  }
-  const userId: string = req.user;
+  // if (!req.user) {
+  //   return res.status(500).send({ message: "Not Authorised!" });
+  // }
+  // const userId: string = req.user;
 
   let isArchived: boolean | null = null;
   if (req.query.isArchived) {
@@ -49,8 +43,8 @@ const getAllEvents = async (req: ExtendedRequest, res: Response) => {
   }
 
   try {
-    const allEvents: HydratedDocument<EventDocument>[] =
-      await eventService.getAllEvents(userId, isArchived);
+    const allEvents = await eventService.getAllEvents();
+    // await eventService.getAllEvents(userId, isArchived);
 
     return res.send(allEvents);
   } catch (error: any) {
@@ -62,7 +56,7 @@ const getAllEventsByDate = async (req: ExtendedRequest, res: Response) => {
   if (!req.user) {
     return res.status(401).send({ message: "Not Authorised!" });
   }
-  const userId: string = req.user;
+  // const userId: string = req.user;
 
   if (
     req.params.date == "null" ||
@@ -96,8 +90,7 @@ const getAllEventsByDate = async (req: ExtendedRequest, res: Response) => {
   }
 
   try {
-    const allEvents: HydratedDocument<EventDocument>[] =
-      await eventService.getAllEventsByDate(userId, date, datePrecision);
+    const allEvents = await eventService.getAllEventsByDate();
     return res.send(allEvents);
   } catch (error: any) {
     return res.status(500).send({ message: error.message });
@@ -106,8 +99,7 @@ const getAllEventsByDate = async (req: ExtendedRequest, res: Response) => {
 
 const getEventById = async (req: ExtendedRequest, res: Response) => {
   try {
-    const oneEvent: HydratedDocument<EventDocument> =
-      await eventService.getEventById(req.params.id);
+    const oneEvent = await eventService.getEventById(req.params.id);
     return res.send(oneEvent);
   } catch (error: any) {
     return res.status(500).send({ message: error.message });
@@ -119,8 +111,7 @@ const updateOneEvent = async (req: ExtendedRequest, res: Response) => {
   const data: IUpdateEventDTO = req.body;
 
   try {
-    const updatedEvent: HydratedDocument<EventDocument> =
-      await eventService.updateOneEvent(id, data);
+    const updatedEvent = await eventService.updateOneEvent(id, data);
 
     if (!updatedEvent) {
       return res.status(404).send({
@@ -154,8 +145,7 @@ const deleteOneEvent = async (req: ExtendedRequest, res: Response) => {
   const id: string = req.params.id;
 
   try {
-    const deletedEvent: HydratedDocument<EventDocument> =
-      await eventService.deleteOneEvent(id);
+    const deletedEvent = await eventService.deleteOneEvent(id);
     if (!deletedEvent) {
       return res.status(404).send({
         message: "Cannot delete event with id=" + id + ". Event was not found",
@@ -169,8 +159,7 @@ const deleteOneEvent = async (req: ExtendedRequest, res: Response) => {
       .send({ message: "Error deleting event with id" + id });
   }
 };
-
-module.exports = {
+const eventController = {
   createNewEvent,
   getAllEvents,
   getAllEventsByDate,
@@ -179,3 +168,5 @@ module.exports = {
   archiveEvents,
   deleteOneEvent,
 };
+
+export = eventController;
