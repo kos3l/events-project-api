@@ -1,4 +1,4 @@
-const userService = require("../services/User.service");
+const userService = require("../services/user.service");
 const {
   registerValidation,
   loginValidation,

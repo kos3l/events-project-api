@@ -5,7 +5,7 @@ import mongoose from "mongoose";
 import yaml from "yamljs";
 import bodyParser from "body-parser";
 import eventRoutes from "./routes/Event.routes";
-import authRoutes from "./routes/Auth.routes";
+import authRoutes from "./routes/auth.routes";
 const swaggerDefinition = yaml.load("./swagger.yaml");
 const swaggerUi = require("swagger-ui-express");
 import { Request, Response } from "express";
