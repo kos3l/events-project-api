@@ -2,7 +2,7 @@ const userService = require("../services/user.service");
 const {
   registerValidation,
   loginValidation,
-} = require("../validations/auth.validation");
+} = require("../validations/Auth.validation");
 const ApiError = require("../utils/ApiError");
 const httpStatus = require("http-status");
 import { ICreateUserDTO } from "../models/dto/user/ICreateUserDTO";
