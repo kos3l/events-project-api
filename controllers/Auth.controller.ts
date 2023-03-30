@@ -1,5 +1,5 @@
 const authService = require("../services/auth.service");
-const tokenService = require("../services/Token.service");
+const tokenService = require("../services/token.service");
 import { Request, Response } from "express";
 import { HydratedDocument } from "mongoose";
 import { UserDocument } from "../models/documents/UserDocument";
